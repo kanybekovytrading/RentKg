@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: rental-postgres
+    environment:
+      POSTGRES_DB: rental_bot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: rental-bot-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: rental_bot
+      DB_USER: postgres
+      DB_PASS: postgres
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME}
+      CHANNEL_MAIN: ${CHANNEL_MAIN}
+      CHANNEL_RENT_OUT: ${CHANNEL_RENT_OUT}
+      CHANNEL_RENT_IN: ${CHANNEL_RENT_IN}
+      CHANNEL_ROOMMATE: ${CHANNEL_ROOMMATE}
+      CHANNEL_BLACKLIST: ${CHANNEL_BLACKLIST}
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

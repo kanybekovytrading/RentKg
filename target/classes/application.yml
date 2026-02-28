@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:notificationdb}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:1111}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  flyway:
+    enabled: false
+    locations: clwasspath:db/migration
+
+telegram:
+  bot:
+    token: 8795185348:AAHDddvEusJ94Pd0eaERSzdEXrk9jsRLBhE
+    username: Bishkek_RentKg_bot
+  channels:
+    main: -1003618903098
+  threads:
+    rent-out:  9   # тема "Сдаю квартиру"
+    rent-in:   11   # тема "Ищу квартиру"
+    roommate:  16   # тема "Подселение"
+    need-roommate:  5   # тема "Предлагаю Подселение"
+    blacklist: 15  # тема "Чёрный список"
+
+app:
+  listing:
+    expiry-days: 7
+    reminder-days: 3
+  notification:
+    max-per-day: 2
+  complaint:
+    threshold: 1
