@@ -31,11 +31,24 @@ public class Keyboards {
     // ── Главное меню ──
 
     public ReplyKeyboardMarkup mainMenu() {
-        return replyKeyboard(List.of(
-                List.of("🏠 Сдать квартиру", "🔍 Ищу квартиру"),
-                List.of("🚪 Сниму комнату",   "🛏 Сдаю место"),
-                List.of("👥 Ищу подселение",  "📋 Мои объявления")
-        ));
+        return ReplyKeyboardMarkup.builder()
+                .keyboard(List.of(
+                        new KeyboardRow(List.of(
+                                new KeyboardButton("🏠 Сдать квартиру"),
+                                new KeyboardButton("🔍 Ищу квартиру")
+                        )),
+                        new KeyboardRow(List.of(
+                                new KeyboardButton("🛏 Сниму комнату"),
+                                new KeyboardButton("🛋 Сдаю место")
+                        )),
+                        new KeyboardRow(List.of(
+                                new KeyboardButton("👥 Ищу подселение"),
+                                new KeyboardButton("📋 Мои объявления")
+                        ))
+                ))
+                .resizeKeyboard(true)
+                .isPersistent(true)  // ← ВОТ ЭТО ГЛАВНОЕ — клавиатура всегда видна
+                .build();
     }
 
     public ReplyKeyboardMarkup districts() {

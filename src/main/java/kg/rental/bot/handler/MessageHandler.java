@@ -40,8 +40,10 @@ public class MessageHandler {
         User user = userService.getOrCreate(msg.getFrom());
 
         if (user.isBanned()) { send(telegramId, "🚫 Ваш аккаунт заблокирован."); return; }
-        if (text.equals("/start") || text.equals("◀️ Главное меню")) { handleStart(user); return; }
-
+        if (text.equals("/start") || text.equals("◀️ Главное меню") || text.equals("/menu")) {
+            handleStart(user);
+            return;
+        }
         UserState state = user.getState();
         switch (state) {
             case IDLE -> handleIdle(user, text);
