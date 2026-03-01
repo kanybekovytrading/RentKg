@@ -260,11 +260,11 @@ public class MessageHandler {
     }
 
     private void handleRentRoomInWho(User user, String text) {
-        userService.saveDraftField(user.getId(), "myGender", text);
+        userService.saveDraftField(user.getId(), "myGender",
+                text.contains("Девушка") ? Gender.FEMALE.name() : Gender.MALE.name());
         userService.setState(user.getTelegramId(), UserState.RENT_ROOM_IN_BUDGET);
         send(user.getTelegramId(), "💰 Ваш бюджет за комнату?", keyboards.budgetRangesRoom());
     }
-
     private void handleRentRoomInBudget(User user, String text) {
         userService.saveDraftField(user.getId(), "priceRange", text);
         userService.setState(user.getTelegramId(), UserState.RENT_ROOM_IN_WHEN);
