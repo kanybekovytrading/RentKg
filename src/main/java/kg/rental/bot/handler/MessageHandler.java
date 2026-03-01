@@ -57,7 +57,6 @@ public class MessageHandler {
             case RENT_OUT_CONTACT     -> handleRentOutContact(user, text);
             case RENT_OUT_PHOTOS      -> handleRentOutPhotos(user, text);
             case RENT_OUT_DESCRIPTION -> handleRentOutDescription(user, text);
-            // Ищу квартиру
             case RENT_IN_DISTRICT    -> handleRentInDistrict(user, text);
             case RENT_IN_BUDGET      -> handleRentInBudget(user, text);
             case RENT_IN_ROOMS       -> handleRentInRooms(user, text);
