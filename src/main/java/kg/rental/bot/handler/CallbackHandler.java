@@ -202,7 +202,7 @@ public class CallbackHandler {
         userService.saveDraftField(user.getId(), "offerRoomType", value);
         userService.setState(telegramId, UserState.ROOMMATE_OFFER_DISTRICT);
         answer(callbackId, "✅");
-        send(telegramId, "📍 В каком районе?", keyboards.districts());
+        send(telegramId, "📍 В каком районе?");
     }
 
     private void handleConfirm(Long telegramId, Long listingId, String callbackId) {
