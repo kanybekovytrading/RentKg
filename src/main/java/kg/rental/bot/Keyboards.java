@@ -148,10 +148,9 @@ public class Keyboards {
     public InlineKeyboardMarkup myListingActions(Long listingId, ListingStatus status) {
         List<InlineKeyboardButton> row = new ArrayList<>();
         if (status == ListingStatus.ACTIVE || status == ListingStatus.PENDING) {
-            row.add(btn("❌ Закрыть", "my_close:" + listingId));
-            row.add(btn("🔁 Продлить", "my_extend:" + listingId));
+            row.add(btn("❌ Неактуально", "my_close:" + listingId));
         } else {
-            row.add(btn("♻️ Переопубликовать", "my_reopen:" + listingId));
+            row.add(btn("🔄 Выложить ещё раз", "my_reopen:" + listingId));
         }
         return InlineKeyboardMarkup.builder().keyboardRow(row).build();
     }

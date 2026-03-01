@@ -70,6 +70,8 @@ public class MessageHandler {
             case RENT_ROOM_IN_WHEN        -> handleRentRoomInWhen(user, text);
             case RENT_ROOM_IN_CONTACT     -> handleRentRoomInContact(user, text);
             case RENT_ROOM_IN_DESCRIPTION -> handleRentRoomInDescription(user, text);
+            case RENT_IN_WHO -> handleRentInWho(user, text);
+
             // Ищу подселение
             case ROOMMATE_SEEK_DISTRICT    -> handleRoommateSeekDistrict(user, text);
             case ROOMMATE_SEEK_BUDGET      -> handleRoommateSeekBudget(user, text);
@@ -209,6 +211,13 @@ public class MessageHandler {
 
     private void handleRentInDistrict(User user, String text) {
         userService.saveDraftField(user.getId(), "district", text);
+        userService.setState(user.getTelegramId(), UserState.RENT_IN_WHO);
+        send(user.getTelegramId(), "👤 Кто будет снимать?", keyboards.whoAreYouFull());
+    }
+
+    private void handleRentInWho(User user, String text) {
+        userService.saveDraftField(user.getId(), "myGender",
+                text.contains("Девушка") ? Gender.FEMALE.name() : Gender.MALE.name());
         userService.setState(user.getTelegramId(), UserState.RENT_IN_BUDGET);
         send(user.getTelegramId(), "💰 Ваш бюджет?", keyboards.budgetRangesApartment());
     }
