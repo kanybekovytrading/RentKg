@@ -240,6 +240,10 @@ public class TelegramChannelService {
                         InlineKeyboardButton.builder()
                                 .text("⚠️ Пожаловаться")
                                 .callbackData("complaint:" + listingId)
+                                .build(),
+                        InlineKeyboardButton.builder()
+                                .text("📝 Подать объявление")
+                                .url("https://t.me/Bishkek_RentKg_bot")
                                 .build()
                 ))
                 .build();
