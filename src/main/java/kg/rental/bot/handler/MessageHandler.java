@@ -66,6 +66,7 @@ public class MessageHandler {
             case RENT_IN_DESCRIPTION -> handleRentInDescription(user, text);
             // Сниму комнату
             case RENT_ROOM_IN_DISTRICT    -> handleRentRoomInDistrict(user, text);
+            case RENT_ROOM_IN_WHO         -> handleRentRoomInWho(user, text);
             case RENT_ROOM_IN_BUDGET      -> handleRentRoomInBudget(user, text);
             case RENT_ROOM_IN_WHEN        -> handleRentRoomInWhen(user, text);
             case RENT_ROOM_IN_CONTACT     -> handleRentRoomInContact(user, text);
@@ -140,11 +141,10 @@ public class MessageHandler {
     private void startRentOut(User user) {
         userService.saveDraftField(user.getId(), "type", ListingType.RENT_OUT.name());
         userService.setState(user.getTelegramId(), UserState.RENT_OUT_DISTRICT);
-        send(user.getTelegramId(), "📍 В каком районе квартира?", keyboards.districts());
+        send(user.getTelegramId(), "📍 В каком районе квартира? (напишите, например: Центр, Джал, Асанбай)");
     }
 
     private void handleRentOutDistrict(User user, String text) {
-        if (!Keyboards.DISTRICTS.contains(text)) { send(user.getTelegramId(), "Выберите район 👇", keyboards.districts()); return; }
         userService.saveDraftField(user.getId(), "district", text);
         userService.setState(user.getTelegramId(), UserState.RENT_OUT_ROOMS);
         send(user.getTelegramId(), "🏠 Сколько комнат?", keyboards.rooms());
@@ -205,11 +205,10 @@ public class MessageHandler {
     private void startRentIn(User user) {
         userService.saveDraftField(user.getId(), "type", ListingType.RENT_IN.name());
         userService.setState(user.getTelegramId(), UserState.RENT_IN_DISTRICT);
-        send(user.getTelegramId(), "📍 В каком районе ищете?", keyboards.districts());
+        send(user.getTelegramId(), "📍 В каком районе ищете? (напишите, например: Центр, Джал, Асанбай)");
     }
 
     private void handleRentInDistrict(User user, String text) {
-        if (!Keyboards.DISTRICTS.contains(text)) { send(user.getTelegramId(), "Выберите район 👇", keyboards.districts()); return; }
         userService.saveDraftField(user.getId(), "district", text);
         userService.setState(user.getTelegramId(), UserState.RENT_IN_BUDGET);
         send(user.getTelegramId(), "💰 Ваш бюджет?", keyboards.budgetRangesApartment());
@@ -252,12 +251,17 @@ public class MessageHandler {
     private void startRentRoomIn(User user) {
         userService.saveDraftField(user.getId(), "type", ListingType.RENT_ROOM_IN.name());
         userService.setState(user.getTelegramId(), UserState.RENT_ROOM_IN_DISTRICT);
-        send(user.getTelegramId(), "📍 В каком районе ищете комнату?", keyboards.districts());
+        send(user.getTelegramId(), "📍 В каком районе ищете комнату? (напишите, например: Центр, Джал, Асанбай)");
     }
 
     private void handleRentRoomInDistrict(User user, String text) {
-        if (!Keyboards.DISTRICTS.contains(text)) { send(user.getTelegramId(), "Выберите район 👇", keyboards.districts()); return; }
         userService.saveDraftField(user.getId(), "district", text);
+        userService.setState(user.getTelegramId(), UserState.RENT_ROOM_IN_WHO);
+        send(user.getTelegramId(), "👤 Кто вы?", keyboards.whoAreYouFull());
+    }
+
+    private void handleRentRoomInWho(User user, String text) {
+        userService.saveDraftField(user.getId(), "myGender", text);
         userService.setState(user.getTelegramId(), UserState.RENT_ROOM_IN_BUDGET);
         send(user.getTelegramId(), "💰 Ваш бюджет за комнату?", keyboards.budgetRangesRoom());
     }
@@ -292,11 +296,10 @@ public class MessageHandler {
     private void startRoommateSeek(User user) {
         userService.saveDraftField(user.getId(), "type", ListingType.ROOMMATE_SEEK.name());
         userService.setState(user.getTelegramId(), UserState.ROOMMATE_SEEK_DISTRICT);
-        send(user.getTelegramId(), "📍 В каком районе ищете?", keyboards.districts());
+        send(user.getTelegramId(), "📍 В каком районе ищете? (напишите, например: Центр, Джал, Асанбай)");
     }
 
     private void handleRoommateSeekDistrict(User user, String text) {
-        if (!Keyboards.DISTRICTS.contains(text)) { send(user.getTelegramId(), "Выберите район 👇", keyboards.districts()); return; }
         userService.saveDraftField(user.getId(), "district", text);
         userService.setState(user.getTelegramId(), UserState.ROOMMATE_SEEK_BUDGET);
         send(user.getTelegramId(), "💰 Ваш бюджет за место?", keyboards.budgetRangesRoommate());
@@ -342,7 +345,6 @@ public class MessageHandler {
     }
 
     private void handleRoommateOfferDistrict(User user, String text) {
-        if (!Keyboards.DISTRICTS.contains(text)) { send(user.getTelegramId(), "Выберите район 👇", keyboards.districts()); return; }
         userService.saveDraftField(user.getId(), "district", text);
         userService.setState(user.getTelegramId(), UserState.ROOMMATE_OFFER_PRICE);
         send(user.getTelegramId(), "💰 Цена за одно место (сом/мес)?");

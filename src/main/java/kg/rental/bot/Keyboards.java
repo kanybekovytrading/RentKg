@@ -1,7 +1,6 @@
 package kg.rental.bot;
 
 import kg.rental.enums.ListingStatus;
-import kg.rental.enums.ListingType;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -15,18 +14,6 @@ import java.util.Set;
 
 @Component
 public class Keyboards {
-
-    public static final List<String> DISTRICTS = List.of(
-            "Центр", "Старая площадь", "Дордой", "Орто-Сай",
-            "Аламедин-1", "Аламедин-2", "Аламедин рынок", "Ак-Орго", "Кара-Жыгач",
-            "Асанбай", "Джал", "Джал мкр", "Южные микрорайоны", "8 микрорайон",
-            "Восток-5", "Тунгуч", "Учкун", "Ипподром", "Восток",
-            "Кок-Жар", "Арча-Бешик", "Тоголок Молдо", "Улан",
-            "7 мкр", "9 мкр", "10 мкр", "11 мкр", "12 мкр",
-            "Свердловский", "Октябрьский", "Первомайский", "Ленинский",
-            "Токмок", "Кант", "Бишкек парк район", "Лебединовка",
-            "Маевка", "Ново-Павловка", "Военно-Антоновка", "Орловка"
-    );
 
     // ── Главное меню ──
 
@@ -47,19 +34,8 @@ public class Keyboards {
                         ))
                 ))
                 .resizeKeyboard(true)
-                .isPersistent(true)  // ← ВОТ ЭТО ГЛАВНОЕ — клавиатура всегда видна
+                .isPersistent(true)
                 .build();
-    }
-
-    public ReplyKeyboardMarkup districts() {
-        List<List<String>> rows = new ArrayList<>();
-        for (int i = 0; i < DISTRICTS.size(); i += 2) {
-            List<String> row = new ArrayList<>();
-            row.add(DISTRICTS.get(i));
-            if (i + 1 < DISTRICTS.size()) row.add(DISTRICTS.get(i + 1));
-            rows.add(row);
-        }
-        return replyKeyboard(rows);
     }
 
     public ReplyKeyboardMarkup yesNo() {
@@ -73,8 +49,16 @@ public class Keyboards {
         ));
     }
 
+    // Для "Ищу подселение" — только Девушка / Парень
     public ReplyKeyboardMarkup whoAreYou() {
         return replyKeyboard(List.of(List.of("👩 Девушка", "👨 Парень")));
+    }
+
+    // Для "Сниму комнату" — Девушка / Парень / Семья
+    public ReplyKeyboardMarkup whoAreYouFull() {
+        return replyKeyboard(List.of(
+                List.of("👩 Девушка", "👨 Парень", "👪 Семья")
+        ));
     }
 
     public ReplyKeyboardMarkup when() {
@@ -102,7 +86,6 @@ public class Keyboards {
         ));
     }
 
-    /** Бюджет для аренды комнаты */
     public ReplyKeyboardMarkup budgetRangesRoom() {
         return replyKeyboard(List.of(
                 List.of("до 8 000", "8 000 – 12 000"),
