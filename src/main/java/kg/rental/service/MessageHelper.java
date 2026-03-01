@@ -153,6 +153,16 @@ public class MessageHelper {
         }
         return sb.toString();
     }
+    private String formatTenantType1(String tenantTypeStr) {
+        if (tenantTypeStr == null || tenantTypeStr.isBlank()) return "Всем";
+        String[] parts = tenantTypeStr.split(",");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (i > 0) sb.append(", ");
+            sb.append(tenantTypePartLabel1(parts[i].trim()));
+        }
+        return sb.toString();
+    }
 
     private String tenantTypePartLabel(String value) {
         return switch (value) {
@@ -160,6 +170,15 @@ public class MessageHelper {
             case "FAMILY" -> "👪 Семьям";
             case "FEMALE" -> "👩 Девушкам";
             case "MALE"   -> "👨 Парням";
+            default       -> value;
+        };
+    }
+    private String tenantTypePartLabel1(String value) {
+        return switch (value) {
+            case "ANY"    -> "👨‍👩‍👧 Всех";
+            case "FAMILY" -> "👪 Семью";
+            case "FEMALE" -> "👩 Девушек";
+            case "MALE"   -> "👨 Парней";
             default       -> value;
         };
     }
