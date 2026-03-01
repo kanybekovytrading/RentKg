@@ -75,7 +75,7 @@ public class Keyboards {
     public ReplyKeyboardMarkup furniture() {
         return replyKeyboard(List.of(
                 List.of("🪑 Мебель есть", "📱 Техника есть"),
-                List.of("🪑📱 Мебель + техника", "❌ Без мебели")
+                List.of("🪑📱 Мебель + Техника", "❌ Без мебели")
         ));
     }
 
