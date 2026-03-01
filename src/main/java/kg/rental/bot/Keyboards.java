@@ -81,8 +81,8 @@ public class Keyboards {
 
     public ReplyKeyboardMarkup budgetRangesApartment() {
         return replyKeyboard(List.of(
-                List.of("до 10 000", "10 000 – 20 000"),
-                List.of("20 000 – 30 000", "от 30 000")
+                List.of("до 30 000", "30 000 – 45 000"),
+                List.of("45 000 – 60 000", "от 60 000")
         ));
     }
 
