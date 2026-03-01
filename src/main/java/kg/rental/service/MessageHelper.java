@@ -41,6 +41,11 @@ public class MessageHelper {
             if (l.getTenantType() != null && !l.getTenantType().isBlank())
                 sb.append("👤 <b>Для кого:</b> ").append(formatTenantType(l.getTenantType())).append("\n");
         }
+        // ── RENT_IN ──
+        if (l.getType() == ListingType.RENT_IN) {
+            if (l.getMyGender() != null)
+                sb.append("👤 <b>Кто снимает:</b> ").append(genderLabel(l.getMyGender())).append("\n");
+        }
 
         // ── RENT_ROOM_IN ──
         if (l.getType() == ListingType.RENT_ROOM_IN) {
