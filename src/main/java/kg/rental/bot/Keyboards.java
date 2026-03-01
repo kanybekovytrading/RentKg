@@ -31,7 +31,9 @@ public class Keyboards {
                         new KeyboardRow(List.of(
                                 new KeyboardButton("👥 Ищу подселение"),
                                 new KeyboardButton("📋 Мои объявления")
-                        ))
+                        )),
+                        new KeyboardRow(List.of(
+                                new KeyboardButton("🏢 Сдать помещение")))
                 ))
                 .resizeKeyboard(true)
                 .isPersistent(true)

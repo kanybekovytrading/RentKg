@@ -33,6 +33,7 @@ public class MatchingService {
             case RENT_ROOM_IN  -> matchRentRoomIn(newListing);
             case ROOMMATE_OFFER -> matchRoommateOffer(newListing);
             case ROOMMATE_SEEK  -> matchRoommateSeek(newListing);
+            case COMMERCIAL_RENT_OUT -> List.of();
         };
     }
 

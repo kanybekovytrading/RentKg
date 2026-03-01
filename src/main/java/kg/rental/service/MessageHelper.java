@@ -20,6 +20,7 @@ public class MessageHelper {
             case RENT_ROOM_IN  -> "СНИМАЮТ КОМНАТУ";
             case ROOMMATE_SEEK  -> "ИЩУ ПОДСЕЛЕНИЕ";
             case ROOMMATE_OFFER -> "СДАЁТСЯ МЕСТО";
+            case COMMERCIAL_RENT_OUT -> "СДАЁТСЯ ПОМЕЩЕНИЕ";
         });
         sb.append("</b>\n");
         sb.append("──────────────────\n");
@@ -62,9 +63,14 @@ public class MessageHelper {
                         .append("ROOM".equals(l.getOfferRoomType()) ? "Комната целиком" : "Место в комнате")
                         .append("\n");
             if (l.getTenantType() != null && !l.getTenantType().isBlank())
-                sb.append("👥 <b>Берём:</b> ").append(formatTenantType(l.getTenantType())).append("\n");
+                sb.append("👥 <b>Берём:</b> ").append(formatTenantType1(l.getTenantType())).append("\n");
         }
-
+// ── COMMERCIAL_RENT_OUT ──
+        if (l.getType() == ListingType.COMMERCIAL_RENT_OUT) {
+            sb.append("💡 <b>Коммуналка:</b> ").append(l.isUtilitiesIncluded() ? "включена" : "не включена").append("\n");
+            if (l.getDescription() != null && !l.getDescription().isBlank())
+                sb.append("📝 ").append(l.getDescription()).append("\n");
+        }
         // ── ROOMMATE_SEEK ──
         if (l.getType() == ListingType.ROOMMATE_SEEK) {
             if (l.getMyGender() != null)
@@ -110,6 +116,7 @@ public class MessageHelper {
             case RENT_ROOM_IN  -> "Снимают комнату";
             case ROOMMATE_SEEK  -> "Ищу подселение";
             case ROOMMATE_OFFER -> "Сдаётся место";
+            case COMMERCIAL_RENT_OUT -> "Сдаётся помещение";
         }).append("\n");
 
         if (l.getPrice() != null)

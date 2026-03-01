@@ -33,4 +33,7 @@ public class TelegramConfig {
 
     @Value("${telegram.threads.need-roommate}")
     private Integer threadNeedRoommate;
+
+    @Value("${telegram.threads.commercial-room}")
+    private Integer threadCommercialRoom;
 }

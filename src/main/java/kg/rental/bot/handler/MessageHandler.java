@@ -90,6 +90,12 @@ public class MessageHandler {
             case ROOMMATE_OFFER_CONTACT     -> handleRoommateOfferContact(user, text);
             case ROOMMATE_OFFER_PHOTOS      -> handleRoommateOfferPhotos(user, text);
             case ROOMMATE_OFFER_DESCRIPTION -> handleRoommateOfferDescription(user, text);
+
+            case COMMERCIAL_RENT_OUT_DISTRICT    -> handleCommercialDistrict(user, text);
+            case COMMERCIAL_RENT_OUT_PRICE       -> handleCommercialPrice(user, text);
+            case COMMERCIAL_RENT_OUT_CONTACT     -> handleCommercialContact(user, text);
+            case COMMERCIAL_RENT_OUT_PHOTOS      -> handleCommercialPhotos(user, text);
+            case COMMERCIAL_RENT_OUT_DESCRIPTION -> handleCommercialDescription(user, text);
             default -> handleStart(user);
         }
     }
@@ -99,7 +105,7 @@ public class MessageHandler {
         UserState state = userService.getState(telegramId);
         User user = userService.getOrCreate(msg.getFrom());
 
-        if (state == UserState.RENT_OUT_PHOTOS || state == UserState.ROOMMATE_OFFER_PHOTOS) {
+        if (state == UserState.RENT_OUT_PHOTOS || state == UserState.ROOMMATE_OFFER_PHOTOS || state == UserState.COMMERCIAL_RENT_OUT_PHOTOS) {
             String fileId = msg.getPhoto().get(msg.getPhoto().size() - 1).getFileId();
             Map<String, Object> draft = userService.getDraft(user.getId());
             @SuppressWarnings("unchecked")
@@ -133,6 +139,7 @@ public class MessageHandler {
             case "🛋 Сдаю место"     -> startRoommateOffer(user);
             case "👥 Ищу подселение" -> startRoommateSeek(user);
             case "📋 Мои объявления" -> showMyListings(user);
+            case "🏢 Сдать помещение" -> startCommercialRentOut(user);
             default -> send(user.getTelegramId(), "Выберите действие 👇", keyboards.mainMenu());
         }
     }
@@ -448,7 +455,49 @@ public class MessageHandler {
                     keyboards.myListingActions(l.getId(), l.getStatus()));
         }
     }
+    private void startCommercialRentOut(User user) {
+        userService.saveDraftField(user.getId(), "type", ListingType.COMMERCIAL_RENT_OUT.name());
+        userService.setState(user.getTelegramId(), UserState.COMMERCIAL_RENT_OUT_DISTRICT);
+        send(user.getTelegramId(), "📍 В каком районе помещение? (напишите район)");
+    }
 
+    private void handleCommercialDistrict(User user, String text) {
+        userService.saveDraftField(user.getId(), "district", text);
+        userService.setState(user.getTelegramId(), UserState.COMMERCIAL_RENT_OUT_PRICE);
+        send(user.getTelegramId(), "💰 Цена в месяц (сом)?");
+    }
+
+    private void handleCommercialPrice(User user, String text) {
+        try {
+            userService.saveDraftField(user.getId(), "price", Integer.parseInt(text.replaceAll("[^0-9]", "")));
+            userService.saveDraftField(user.getId(), "utilitiesIncluded", false);
+            userService.setState(user.getTelegramId(), UserState.COMMERCIAL_RENT_OUT_CONTACT);
+            send(user.getTelegramId(), "📞 Ваш контакт для связи (номер или @username)?");
+        } catch (NumberFormatException e) {
+            send(user.getTelegramId(), "Введите цену числом, например: 50000");
+        }
+    }
+
+    private void handleCommercialContact(User user, String text) {
+        userService.saveDraftField(user.getId(), "contact", text);
+        userService.setState(user.getTelegramId(), UserState.COMMERCIAL_RENT_OUT_PHOTOS);
+        send(user.getTelegramId(), "📷 Отправьте фото или 'Пропустить ⏭'", keyboards.skipOrFinish());
+    }
+
+    private void handleCommercialPhotos(User user, String text) {
+        if (text.equals("Пропустить ⏭") || text.equals("Готово ✅")) {
+            userService.setState(user.getTelegramId(), UserState.COMMERCIAL_RENT_OUT_DESCRIPTION);
+            send(user.getTelegramId(), "📝 Описание (площадь, этаж, тип помещения и т.д.)", keyboards.skipOrFinish());
+        } else {
+            send(user.getTelegramId(), "📷 Отправьте фото или 'Пропустить ⏭'", keyboards.skipOrFinish());
+        }
+    }
+
+    private void handleCommercialDescription(User user, String text) {
+        if (!text.equals("Пропустить ⏭") && !text.equals("Готово ✅"))
+            userService.saveDraftField(user.getId(), "description", text);
+        publishAndFinish(user);
+    }
     // ── helpers ──
 
     private void send(Long chatId, String text) {

@@ -28,6 +28,7 @@ telegram:
     roommate:  16   # тема "Подселение"
     need-roommate:  5   # тема "Предлагаю Подселение"
     blacklist: 15  # тема "Чёрный список"
+    commercial-room: 130
 
 app:
   listing:

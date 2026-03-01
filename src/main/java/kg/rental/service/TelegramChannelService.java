@@ -125,6 +125,7 @@ public class TelegramChannelService {
             case ROOMMATE_OFFER  -> "🎯 Появился вариант подселения под ваши критерии!";
             case ROOMMATE_SEEK   -> "🎯 Появился желающий подселиться к вам!";
             case RENT_ROOM_IN    -> "🎯 Появилась комната под ваши критерии!";
+            case COMMERCIAL_RENT_OUT -> "🎯 Появилось коммерческое помещение под ваши критерии!";
         };
 
         String text = header + "\n\n" + messageHelper.formatListing(matchedListing);
@@ -230,6 +231,7 @@ public class TelegramChannelService {
             case RENT_OUT        -> config.getThreadRentOut();
             case RENT_IN         -> config.getThreadRentIn();
             case RENT_ROOM_IN , ROOMMATE_SEEK   -> config.getThreadRoommate();
+            case COMMERCIAL_RENT_OUT -> config.getThreadCommercialRoom();
             case ROOMMATE_OFFER  -> config.getThreadNeedRoommate();
         };
     }
