@@ -123,10 +123,10 @@ public class MessageHandler {
         switch (text) {
             case "🏠 Сдать квартиру" -> startRentOut(user);
             case "🔍 Ищу квартиру"   -> startRentIn(user);
-            case "🚪 Сниму комнату"  -> startRentRoomIn(user);
             case "👥 Ищу подселение" -> startRoommateSeek(user);
-            case "🛏 Сдаю место"     -> startRoommateOffer(user);
             case "📋 Мои объявления" -> showMyListings(user);
+            case "🛏 Сниму комнату"  -> startRentRoomIn(user);   // 🛏 как в mainMenu
+            case "🛋 Сдаю место"     -> startRoommateOffer(user); // 🛋 как в mainMenu
             default -> send(user.getTelegramId(), "Выберите действие 👇", keyboards.mainMenu());
         }
     }
