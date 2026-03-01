@@ -62,11 +62,15 @@ public class MessageHandler {
             case RENT_IN_BUDGET      -> handleRentInBudget(user, text);
             case RENT_IN_ROOMS       -> handleRentInRooms(user, text);
             case RENT_IN_WHEN        -> handleRentInWhen(user, text);
+            case RENT_IN_CONTACT     -> handleContact(user, text, UserState.RENT_IN_DESCRIPTION,
+                    "📝 Описание (необязательно)");
             case RENT_IN_DESCRIPTION -> handleRentInDescription(user, text);
             // Сниму комнату
             case RENT_ROOM_IN_DISTRICT    -> handleRentRoomInDistrict(user, text);
             case RENT_ROOM_IN_BUDGET      -> handleRentRoomInBudget(user, text);
             case RENT_ROOM_IN_WHEN        -> handleRentRoomInWhen(user, text);
+            case RENT_ROOM_IN_CONTACT     -> handleContact(user, text, UserState.RENT_ROOM_IN_DESCRIPTION,
+                    "📝 Описание (необязательно, например: нужна мебель, с балконом и т.д.)");
             case RENT_ROOM_IN_DESCRIPTION -> handleRentRoomInDescription(user, text);
             // Ищу подселение
             case ROOMMATE_SEEK_DISTRICT    -> handleRoommateSeekDistrict(user, text);
@@ -74,6 +78,8 @@ public class MessageHandler {
             case ROOMMATE_SEEK_GENDER      -> handleRoommateSeekGender(user, text);
             case ROOMMATE_SEEK_SPOTS       -> send(telegramId, "Выберите количество из кнопок выше 👆");
             case ROOMMATE_SEEK_WHEN        -> handleRoommateSeekWhen(user, text);
+            case ROOMMATE_SEEK_CONTACT     -> handleContact(user, text, UserState.ROOMMATE_SEEK_DESCRIPTION,
+                    "📝 Описание (необязательно)");
             case ROOMMATE_SEEK_DESCRIPTION -> handleRoommateSeekDescription(user, text);
             // Сдаю место
             case ROOMMATE_OFFER_TYPE        -> send(telegramId, "Выберите вариант из кнопок выше 👆");
@@ -82,6 +88,8 @@ public class MessageHandler {
             case ROOMMATE_OFFER_SPOTS       -> handleRoommateOfferSpots(user, text);
             case ROOMMATE_OFFER_GENDER      -> send(telegramId, "Выберите варианты из кнопок выше и нажмите ✅ Готово 👆");
             case ROOMMATE_OFFER_AMENITIES   -> handleRoommateOfferAmenities(user, text);
+            case ROOMMATE_OFFER_CONTACT     -> handleContact(user, text, UserState.ROOMMATE_OFFER_PHOTOS,
+                    "📷 Фото комнаты или 'Пропустить ⏭'");
             case ROOMMATE_OFFER_PHOTOS      -> handleRoommateOfferPhotos(user, text);
             case ROOMMATE_OFFER_DESCRIPTION -> handleRoommateOfferDescription(user, text);
             default -> handleStart(user);
@@ -123,12 +131,20 @@ public class MessageHandler {
         switch (text) {
             case "🏠 Сдать квартиру" -> startRentOut(user);
             case "🔍 Ищу квартиру"   -> startRentIn(user);
+            case "🛏 Сниму комнату"  -> startRentRoomIn(user);
+            case "🛋 Сдаю место"     -> startRoommateOffer(user);
             case "👥 Ищу подселение" -> startRoommateSeek(user);
             case "📋 Мои объявления" -> showMyListings(user);
-            case "🛏 Сниму комнату"  -> startRentRoomIn(user);   // 🛏 как в mainMenu
-            case "🛋 Сдаю место"     -> startRoommateOffer(user); // 🛋 как в mainMenu
             default -> send(user.getTelegramId(), "Выберите действие 👇", keyboards.mainMenu());
         }
+    }
+
+    // ── Универсальный обработчик контакта ──
+
+    private void handleContact(User user, String text, UserState nextState, String nextPrompt) {
+        userService.saveDraftField(user.getId(), "contact", text);
+        userService.setState(user.getTelegramId(), nextState);
+        send(user.getTelegramId(), nextPrompt, keyboards.skipOrFinish());
     }
 
     // ── Сдаю квартиру ──
@@ -227,15 +243,13 @@ public class MessageHandler {
 
     private void handleRentInWhen(User user, String text) {
         userService.saveDraftField(user.getId(), "when", text);
-        userService.setState(user.getTelegramId(), UserState.RENT_IN_DESCRIPTION);
-        send(user.getTelegramId(), "📝 Описание (необязательно)", keyboards.skipOrFinish());
+        userService.setState(user.getTelegramId(), UserState.RENT_IN_CONTACT);
+        send(user.getTelegramId(), "📞 Ваш контакт для связи (номер или @username)?");
     }
 
     private void handleRentInDescription(User user, String text) {
         if (!text.equals("Пропустить ⏭") && !text.equals("Готово ✅"))
             userService.saveDraftField(user.getId(), "description", text);
-        userService.saveDraftField(user.getId(), "contact",
-                "@" + (user.getUsername() != null ? user.getUsername() : user.getTelegramId()));
         publishAndFinish(user);
     }
 
@@ -262,16 +276,13 @@ public class MessageHandler {
 
     private void handleRentRoomInWhen(User user, String text) {
         userService.saveDraftField(user.getId(), "when", text);
-        userService.setState(user.getTelegramId(), UserState.RENT_ROOM_IN_DESCRIPTION);
-        send(user.getTelegramId(), "📝 Описание (необязательно, например: нужна мебель, с балконом и т.д.)",
-                keyboards.skipOrFinish());
+        userService.setState(user.getTelegramId(), UserState.RENT_ROOM_IN_CONTACT);
+        send(user.getTelegramId(), "📞 Ваш контакт для связи (номер или @username)?");
     }
 
     private void handleRentRoomInDescription(User user, String text) {
         if (!text.equals("Пропустить ⏭") && !text.equals("Готово ✅"))
             userService.saveDraftField(user.getId(), "description", text);
-        userService.saveDraftField(user.getId(), "contact",
-                "@" + (user.getUsername() != null ? user.getUsername() : user.getTelegramId()));
         publishAndFinish(user);
     }
 
@@ -305,15 +316,13 @@ public class MessageHandler {
 
     private void handleRoommateSeekWhen(User user, String text) {
         userService.saveDraftField(user.getId(), "when", text);
-        userService.setState(user.getTelegramId(), UserState.ROOMMATE_SEEK_DESCRIPTION);
-        send(user.getTelegramId(), "📝 Описание (необязательно)", keyboards.skipOrFinish());
+        userService.setState(user.getTelegramId(), UserState.ROOMMATE_SEEK_CONTACT);
+        send(user.getTelegramId(), "📞 Ваш контакт для связи (номер или @username)?");
     }
 
     private void handleRoommateSeekDescription(User user, String text) {
         if (!text.equals("Пропустить ⏭") && !text.equals("Готово ✅"))
             userService.saveDraftField(user.getId(), "description", text);
-        userService.saveDraftField(user.getId(), "contact",
-                "@" + (user.getUsername() != null ? user.getUsername() : user.getTelegramId()));
         publishAndFinish(user);
     }
 
@@ -353,8 +362,8 @@ public class MessageHandler {
     private void handleRoommateOfferAmenities(User user, String text) {
         if (!text.equals("Пропустить ⏭"))
             userService.saveDraftField(user.getId(), "amenities", text);
-        userService.setState(user.getTelegramId(), UserState.ROOMMATE_OFFER_PHOTOS);
-        send(user.getTelegramId(), "📷 Фото комнаты или 'Пропустить ⏭'", keyboards.skipOrFinish());
+        userService.setState(user.getTelegramId(), UserState.ROOMMATE_OFFER_CONTACT);
+        send(user.getTelegramId(), "📞 Ваш контакт для связи (номер или @username)?");
     }
 
     private void handleRoommateOfferPhotos(User user, String text) {
@@ -367,8 +376,6 @@ public class MessageHandler {
     private void handleRoommateOfferDescription(User user, String text) {
         if (!text.equals("Пропустить ⏭") && !text.equals("Готово ✅"))
             userService.saveDraftField(user.getId(), "description", text);
-        userService.saveDraftField(user.getId(), "contact",
-                "@" + (user.getUsername() != null ? user.getUsername() : user.getTelegramId()));
         publishAndFinish(user);
     }
 
